@@ -1,19 +1,13 @@
-const { default: mongoose } = require("mongoose");
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://127.0.0.1:27017/db_test');
-mongoose.connection
-    .once('open', () => console.log('Connected To the database!'))
-    .on('error', err => console.log('Error with the database!', err));
+require('./Models/db');
+const express = require('express');
+const bodyParser = require('body-parser');
 
+const PORT = 5000;
 
-const st_model = require('./Models/students.js');
+const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(require('cors')());
+app.use('/students', require('./routes/student'));
 
-async function getStudents() {
-    try {
-        const students = await st_model.find({});
-        console.log(students);
-    } catch (err) {
-        console.log(err);
-    }
-}
-getStudents()
+app.listen(PORT, () => console.log(`App Running on Port ${PORT}`));
